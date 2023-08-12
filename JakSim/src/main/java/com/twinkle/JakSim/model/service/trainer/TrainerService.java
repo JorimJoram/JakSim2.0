@@ -136,10 +136,30 @@ public class TrainerService {
     // 트레이너 찾기
     @Transactional
     public List<TrainerSearchDto> searchAllTrainer(int page, int pageSize, int filter, String address) {
-        List<TrainerSearchDto> dtoList = trainerDao.getAllTrainerForSearch(page, pageSize, filter, address);
-        setAvgStar(dtoList);
-        dtoListSort(dtoList);
+        return trainerDao.getAllTrainerForSearch(page, pageSize, filter, address);
+    }
+
+    // 메인페이지 트레이너 (최신등록순)
+    @Transactional
+    public List<TrainerSearchDto> searchTrainerForMainPage() {
+        List<TrainerSearchDto> dtoList = trainerDao.getMainTrainerAvgStar();
+        dtoList.forEach((item) -> {
+            setMapping(item, trainerDao.getTrainerByUtIdx(item.getTrainerId()));
+        });
+
         return dtoList;
+    }
+
+    private void setMapping(TrainerSearchDto item, TrainerSearchDto dto) {
+        item.setUserName(dto.getUserName());
+        item.setUserId(dto.getUserId());
+        item.setAddress(dto.getAddress());
+        item.setProfile(dto.getProfile());
+        item.setGym(dto.getGym());
+        item.setExpert1(dto.getExpert1());
+        item.setExpert2(dto.getExpert2());
+        item.setCertName(dto.getCertName());
+        item.setImagePath(dto.getImagePath());
     }
 
     // 트레이너 전체 수 count
@@ -148,32 +168,6 @@ public class TrainerService {
         return trainerDao.getTrainerCount(filter, address);
     }
 
-    // 메인페이지 트레이너 (최신등록순)
-    @Transactional
-    public List<TrainerSearchDto> searchTrainerForMainPage() {
-        List<TrainerSearchDto> dtoList = trainerDao.getAllTrainerForMainPage();
-        setAvgStar(dtoList);
-        dtoListSort(dtoList);
-
-        return dtoList;
-    }
-
-    private void setAvgStar(List<TrainerSearchDto> dtoList){
-        dtoList.forEach((item) -> {
-            item.setAvgRstar(trainerDao.getTrainerAvgStarForMainPage(item.getTrainerId()));
-        });
-    }
-
-    private void dtoListSort(List<TrainerSearchDto> dtoList){
-        if(dtoList.size() > 1){
-            dtoList.sort(new Comparator<TrainerSearchDto>() {
-                @Override
-                public int compare(TrainerSearchDto o1, TrainerSearchDto o2) {
-                    return Double.compare(o2.getAvgRstar(), o1.getAvgRstar());
-                }
-            });
-        }
-    }
 
     // 트레이너 이름 및 인덱스 값 가져오기
     @Transactional

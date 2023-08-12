@@ -9,6 +9,7 @@ import com.twinkle.JakSim.model.dto.trainer.TrainerInsertDto;
 import com.twinkle.JakSim.model.dto.trainer.*;
 import com.twinkle.JakSim.model.dto.trainer.response.TrainerDetailResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,8 +17,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -78,14 +81,16 @@ public class TrainerDao {
         }
     }
 
-
     // 트레이너 찾기
+    // 수정 필요 -> 허락 후 진행
     public List<TrainerSearchDto> getAllTrainerForSearch(int page, int pageSize, int filter, String address) {
         int offset = (page - 1) * pageSize;
         //1. 주소만 있을 때, 필터링은 없음
         //2. 필터링만 할 때, 주소는 없음
         //3. 주소와 필터링을 둘다 할 때
         //4. 주소와 필터링을 둘다 안할때 (else)
+
+        List<TrainerSearchDto> dtoList = new ArrayList<>();
 
         if((!address.equals("-")) && (filter == -1)){
 
@@ -103,7 +108,7 @@ public class TrainerDao {
                     " ORDER BY td.UT_IDX DESC" +
                     " LIMIT ?, ?";
 
-            return jdbcTemplate.query(sql, new Object[]{"%" + address + "%", offset, pageSize}, new TrainerSearchRowMapper());
+            dtoList = jdbcTemplate.query(sql, new Object[]{"%" + address + "%", offset, pageSize}, new TrainerSearchRowMapper());
 
         }
         else if((address.equals("-")) && (filter != -1)) {
@@ -122,7 +127,7 @@ public class TrainerDao {
                     " ORDER BY td.UT_IDX DESC" +
                     " LIMIT ?, ?";
 
-            return jdbcTemplate.query(sql, new Object[]{filter, filter, offset, pageSize}, new TrainerSearchRowMapper());
+            dtoList = jdbcTemplate.query(sql, new Object[]{filter, filter, offset, pageSize}, new TrainerSearchRowMapper());
 
         }
         else if((!address.equals("-")) && (filter != -1)) {
@@ -141,7 +146,7 @@ public class TrainerDao {
                     " ORDER BY td.UT_IDX DESC" +
                     " LIMIT ?, ?";
 
-            return jdbcTemplate.query(sql, new Object[]{"%" + address + "%", filter, filter, offset, pageSize}, new TrainerSearchRowMapper());
+            dtoList =  jdbcTemplate.query(sql, new Object[]{"%" + address + "%", filter, filter, offset, pageSize}, new TrainerSearchRowMapper());
 
         }
         else {
@@ -159,10 +164,44 @@ public class TrainerDao {
                     " ORDER BY td.UT_IDX DESC" +
                     " LIMIT ?, ?";
 
-            return jdbcTemplate.query(sql, new Object[]{offset, pageSize}, new TrainerSearchRowMapper());
+            dtoList = jdbcTemplate.query(sql, new Object[]{offset, pageSize}, new TrainerSearchRowMapper());
 
         }
 
+        dtoList.forEach((item) -> {
+            item.setAvgRstar(getStars(item.getTrainerId()));
+        });
+
+        return dtoList;
+    }
+
+    private double getStars(int utIdx) {
+        String sql = "SELECT " +
+                "ROUND(AVG(REVIEW.R_STAR), 1) AS R_STAR_AVG " +
+                "FROM PRODUCT, PAYMENT, REVIEW " +
+                "WHERE " +
+                "PRODUCT.TP_IDX = PAYMENT.TP_IDX " +
+                "AND " +
+                "PAYMENT.TID = REVIEW.TID " +
+                "AND " +
+                "UT_IDX = ? " +
+                "GROUP BY PAYMENT.TP_IDX";
+        TrainerSearchDto dto = new TrainerSearchDto();
+        try{
+            dto = jdbcTemplate.queryForObject(sql, new RowMapper<TrainerSearchDto>() {
+                @Override
+                public TrainerSearchDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    TrainerSearchDto tmp = new TrainerSearchDto();
+                    tmp.setAvgRstar(rs.getDouble("R_STAR_AVG"));
+                    System.out.println(tmp.getAvgRstar());
+                    return tmp;
+                }
+            }, utIdx);
+        }catch (Exception e){
+            dto.setAvgRstar(0);
+            System.out.println(e.getMessage());
+        }
+        return Objects.requireNonNull(dto).getAvgRstar();
     }
 
     // 2-1. 트레이너 count
@@ -201,7 +240,6 @@ public class TrainerDao {
 
     }
 
-
     // 메인 페이지
     public List<TrainerSearchDto> getAllTrainerForMainPage() {
         String sql = "SELECT DISTINCT td.user_id, td.UT_IDX, td.UT_PROFILE_IMG, ti.TI_PATH, td.UT_GYM, ui.user_name, " +
@@ -236,32 +274,57 @@ public class TrainerDao {
         }
     }
 
-    public double getTrainerAvgStarForMainPage(int ut_idx) {
-        String sql = "SELECT ROUND(AVG(REVIEW.R_STAR), 1) AS AVG_R_STAR " +
+    public TrainerSearchDto getTrainerByUtIdx(int utIdx){
+        String sql = "SELECT DISTINCT td.user_id, td.UT_IDX, td.UT_PROFILE_IMG, ti.TI_PATH, td.UT_GYM, ui.user_name, " +
+                "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME" +
+                " FROM trainer_details td" +
+                " JOIN product p ON td.UT_IDX = p.UT_IDX" +
+                " JOIN trainer_career tca ON td.UT_IDX = tca.UT_IDX" +
+                " JOIN trainer_cert tc ON td.UT_IDX = tc.UT_IDX" +
+                " JOIN trainer_image ti ON td.UT_IDX = ti.UT_IDX" +
+                " JOIN user_info ui ON td.user_id = ui.user_id" +
+                " WHERE td.UT_IDX = ?" +
+                " LIMIT 3";
+        TrainerSearchDto dto = new TrainerSearchDto();
+        try{
+            dto = jdbcTemplate.queryForObject(sql, new TrainerSearchRowMapper(), utIdx);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        return dto;
+    }
+
+    public List<TrainerSearchDto> getMainTrainerAvgStar() {
+        String sql =  queryForAvgStar() + "LIMIT 3";
+
+        List<TrainerSearchDto> dtoList = new ArrayList<>();
+        try{
+            dtoList = jdbcTemplate.query(sql, new RowMapper<TrainerSearchDto>() {
+                @Override
+                public TrainerSearchDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    TrainerSearchDto dto = new TrainerSearchDto();
+                    dto.setAvgRstar(rs.getDouble("AVG_R_STAR"));
+                    dto.setTrainerId(rs.getInt("UT_IDX"));
+                    return dto;
+                }
+            });
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        return dtoList;
+    }
+
+    private String queryForAvgStar(){
+        return "SELECT PRODUCT.UT_IDX, ROUND(AVG(REVIEW.R_STAR), 1) AS AVG_R_STAR " +
                 "FROM PRODUCT, PAYMENT, REVIEW " +
                 "WHERE " +
                 "PRODUCT.TP_IDX = PAYMENT.TP_IDX " +
                 "AND " +
                 "PAYMENT.TID = REVIEW.TID " +
-                "AND " +
-                "UT_IDX = ? " +
                 "GROUP BY PAYMENT.TP_IDX " +
-                "ORDER BY PAYMENT.TP_IDX DESC";
-        TrainerSearchDto dto = new TrainerSearchDto();
-        try{
-            dto = jdbcTemplate.queryForObject(sql, new RowMapper<TrainerSearchDto>() {
-                @Override
-                public TrainerSearchDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    TrainerSearchDto dto = new TrainerSearchDto();
-                    dto.setAvgRstar(rs.getDouble("AVG_R_STAR"));
-                    return dto;
-                }
-            }, ut_idx);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-
-        return Objects.requireNonNull(dto).getAvgRstar();
+                "ORDER BY PAYMENT.TP_IDX DESC ";
     }
 
     // 트레이너 상세페이지
