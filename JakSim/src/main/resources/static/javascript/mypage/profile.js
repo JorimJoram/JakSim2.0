@@ -50,7 +50,7 @@ function stopTimer(){
 }
 
 function checkEmail(){
-    axios.get(`/email/api/dup-verify?email=${emailInput.value}`)
+    axios.get(`/email/api/verify-email?email=${emailInput.value}`)
         .then(response=>{
             if(response.data){
                 document.getElementById('profile_dup_span').innerHTML = '';

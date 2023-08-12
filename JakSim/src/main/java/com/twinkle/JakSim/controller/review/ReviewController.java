@@ -19,29 +19,20 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final FileService fileService;
     private final TrainerService trainerService;
-    
-    // 수정필요
 
-//    @GetMapping("/registerReview/{trainerId}")
-//    public String registerMyReview(Model model, @PathVariable("trainerId") String trainerId, @AuthenticationPrincipal User info) {
-//        if(info != null) {
-//            model.addAttribute("profile_image", fileService.getSingeProfile(info.getUsername()));
-//            //model.addAttribute("isTrainer", info.getAuthorities().toString().equals("[ROLE_TRAINER]"));
-//        }
-//        model.addAttribute("head_title", "리뷰 등록");
-//        model.addAttribute("trainerId", trainerId);
-//        //mypage에서 접근 위해 추가했습니다.
-//        model.addAttribute("trainerIdx", trainerService.searchByUsername(trainerId).getUt_idx());
-//        return "content/review/registerReview";
-//    }
-
-    @PostMapping("/registerReview/{trainerIdx}")
-    public String registerReview(@PathVariable("trainerIdx") int trainerIdx, @AuthenticationPrincipal User info,
-                                 ReviewRequestDto reviewRequestDto) {
-        reviewService.insertReview(reviewRequestDto, info.getUsername(), trainerIdx);
-
-        return "redirect:/";
+    @GetMapping("/registerReview/{tid}")
+    public String registerMyReview(Model model, @PathVariable("tid") String tid, @AuthenticationPrincipal User info) {
+        model.addAttribute("head_title", "리뷰 등록");
+        return "content/review/registerReview";
     }
+
+//    @PostMapping("/registerReview/{trainerIdx}")
+//    public String registerReview(@PathVariable("trainerIdx") int trainerIdx, @AuthenticationPrincipal User info,
+//                                 ReviewRequestDto reviewRequestDto) {
+//        reviewService.insertReview(reviewRequestDto, info.getUsername(), trainerIdx);
+//
+//        return "redirect:/";
+//    }
 
     // 리뷰 수정
     @GetMapping("/review/editReview/{reviewIdx}")

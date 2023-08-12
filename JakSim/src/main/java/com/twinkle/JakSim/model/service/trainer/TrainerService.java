@@ -22,10 +22,7 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -139,7 +136,10 @@ public class TrainerService {
     // 트레이너 찾기
     @Transactional
     public List<TrainerSearchDto> searchAllTrainer(int page, int pageSize, int filter, String address) {
-        return trainerDao.getAllTrainerForSearch(page, pageSize, filter, address);
+        List<TrainerSearchDto> dtoList = trainerDao.getAllTrainerForSearch(page, pageSize, filter, address);
+        setAvgStar(dtoList);
+        dtoListSort(dtoList);
+        return dtoList;
     }
 
     // 트레이너 전체 수 count
@@ -151,7 +151,28 @@ public class TrainerService {
     // 메인페이지 트레이너 (최신등록순)
     @Transactional
     public List<TrainerSearchDto> searchTrainerForMainPage() {
-        return trainerDao.getAllTrainerForMainPage();
+        List<TrainerSearchDto> dtoList = trainerDao.getAllTrainerForMainPage();
+        setAvgStar(dtoList);
+        dtoListSort(dtoList);
+
+        return dtoList;
+    }
+
+    private void setAvgStar(List<TrainerSearchDto> dtoList){
+        dtoList.forEach((item) -> {
+            item.setAvgRstar(trainerDao.getTrainerAvgStarForMainPage(item.getTrainerId()));
+        });
+    }
+
+    private void dtoListSort(List<TrainerSearchDto> dtoList){
+        if(dtoList.size() > 1){
+            dtoList.sort(new Comparator<TrainerSearchDto>() {
+                @Override
+                public int compare(TrainerSearchDto o1, TrainerSearchDto o2) {
+                    return Double.compare(o2.getAvgRstar(), o1.getAvgRstar());
+                }
+            });
+        }
     }
 
     // 트레이너 이름 및 인덱스 값 가져오기

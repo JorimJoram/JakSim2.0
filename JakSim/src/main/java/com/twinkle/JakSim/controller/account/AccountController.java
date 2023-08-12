@@ -10,12 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 public class AccountController {
     private final String defaultPath = "content/account/";
 
-    @GetMapping("/account")
-    public String accountPage(Model model) {
-        model.addAttribute("head_title", "회원가입");
-        return String.format(this.defaultPath + "account");
-    }
-
     @GetMapping("/account/{num}")
     public String accountPages(@PathVariable("num") int num, Model model) {
         String pageSeq;

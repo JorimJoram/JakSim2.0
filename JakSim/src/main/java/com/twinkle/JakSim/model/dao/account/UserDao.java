@@ -27,8 +27,8 @@ public class UserDao {
         try{
             result = jdbcTemplate.update(sql,
                     user.getId(), user.getPw(), user.getName(), user.getGender(), user.getTel(), user.getEmail(), user.getBirth(), user.getRole());
-        }catch(EmptyResultDataAccessException e){
-            return -1;
+        }catch(Exception e){
+            System.out.println(e.getMessage());
         }
 
         return result;

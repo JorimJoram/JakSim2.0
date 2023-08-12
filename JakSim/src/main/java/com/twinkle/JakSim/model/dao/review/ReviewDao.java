@@ -19,18 +19,21 @@ public class ReviewDao {
 
     /**
      * TRAINER_ID 누락
-     * @param review
      * @param userId
-     * @param trainerIdx
      */
 
     // 리뷰 등록
-    public void insertReview(ReviewRequestDto review, String userId, int trainerIdx) {
-        this.sql = "INSERT INTO REVIEW VALUES(NULL, ?, ?, ?, ?, current_timestamp, NULL)";
+    public int insertReview(ReviewRequestDto dto, String userId) {
+        this.sql = "INSERT INTO REVIEW(USER_ID, P_IDX, R_CONTENT, R_STAR, R_C_DT) " +
+                "VALUES(?, ?, ?, ?, CURRENT_TIMESTAMP)";
+        int result = -1;
 
-        jdbcTemplate.update(this.sql, userId, trainerIdx,
-                            review.getReviewContent(), review.getStar());
-
+        try{
+            result = jdbcTemplate.update(this.sql, userId, dto.getPayment_idx(), dto.getReviewContent(), dto.getStar());
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return result;
     }
 
     // 트레이너 리뷰 미리보기 (최신순)

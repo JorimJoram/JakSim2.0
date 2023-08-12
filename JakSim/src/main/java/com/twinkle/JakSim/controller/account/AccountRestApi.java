@@ -5,15 +5,9 @@ import com.twinkle.JakSim.model.service.account.AccountService;
 import com.twinkle.JakSim.model.service.account.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 
 @RestController
 @RequestMapping("/account/api")
@@ -22,7 +16,7 @@ public class AccountRestApi {
     private final AccountService accountService;
     private final FileService fileService;
 
-    @PostMapping("/action")
+    @PostMapping("/register")
     public int accountAction(@RequestBody UserDto data){
         return accountService.CreateMember(data);
     }

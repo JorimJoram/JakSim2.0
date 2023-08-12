@@ -21,8 +21,20 @@ public class ReviewService {
 
     // 리뷰 등록
     @Transactional
-    public void insertReview(ReviewRequestDto review, String userId, int trainerIdx) {
-        reviewDao.insertReview(review, userId, trainerIdx);
+    public void insertReview(ReviewRequestDto dto, String userId) {
+        reviewDao.insertReview(dto, userId);
+    }
+
+    // 리뷰 수정하기
+    @Transactional
+    public void editReview(ReviewRequestDto review, String userId) {
+        reviewDao.editReview(review, userId);
+    }
+
+    // 리뷰 삭제하기
+    @Transactional
+    public void deleteReview(String userId) {
+        reviewDao.deleteReview(userId);
     }
 
     // 트레이너별 리뷰 미리보기 (3개)
@@ -53,18 +65,6 @@ public class ReviewService {
     @Transactional
     public Optional<List<ReviewRequestDto>> showMyReviewForMyPage(String userId) {
         return reviewDao.getMyReviewForMyPage(userId);
-    }
-
-    // 리뷰 수정하기
-    @Transactional
-    public void editReview(ReviewRequestDto review, String userId) {
-        reviewDao.editReview(review, userId);
-    }
-
-    // 리뷰 삭제하기
-    @Transactional
-    public void deleteReview(String userId) {
-        reviewDao.deleteReview(userId);
     }
 
 }

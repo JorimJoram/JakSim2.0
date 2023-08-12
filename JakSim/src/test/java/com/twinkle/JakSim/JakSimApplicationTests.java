@@ -2,10 +2,14 @@ package com.twinkle.JakSim;
 
 import com.twinkle.JakSim.controller.account.AccountRestApi;
 import com.twinkle.JakSim.model.dto.account.UserDto;
+import com.twinkle.JakSim.model.dto.payment.response.ApproveResponse;
 import com.twinkle.JakSim.model.service.account.AccountService;
+import com.twinkle.JakSim.model.service.payment.PaymentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.time.LocalDateTime;
 
 @SpringBootTest
 class JakSimApplicationTests {
@@ -13,6 +17,8 @@ class JakSimApplicationTests {
 	private AccountService accountService;
 	@Autowired
 	private AccountRestApi accountRestApi;
+	@Autowired
+	private PaymentService paymentService;
 
 
 	/**
@@ -43,8 +49,22 @@ class JakSimApplicationTests {
 			userDto.setTel("55324"+i);
 			userDto.setRole(1);// 0->Admin 1->User 2->Trainer
 
-			result = accountRestApi.accountAction(userDto);
+			//result = accountRestApi.accountAction(userDto);
 		}
 		System.out.println("fin");
+	}
+
+	@Test
+	void singlePayment(){
+		//user_id, tp_idx, tid, p_a_dt, p_status, p_pt_cnt, p_pt_period
+		ApproveResponse dto = new ApproveResponse();
+
+		dto.setTid("T4d69e2b76b90283a2d4");
+		dto.setItem_code("10");
+		dto.setCreated_at(LocalDateTime.now().toString());
+		dto.setPtTimes(10);
+		dto.setPtPeriod(30);
+
+		System.out.println(paymentService.savePaymentDetails("west5", dto));
 	}
 }

@@ -25,7 +25,7 @@ public class TrainerSearchRowMapper implements RowMapper<TrainerSearchDto> {
         trainerSearchDto.setCertName(rs.getString("TC_NAME"));
         trainerSearchDto.setImagePath(rs.getString("TI_PATH"));
 
-        trainerSearchDto.setAvgRstar(rs.getDouble("AVG_R_STAR"));
+        //trainerSearchDto.setAvgRstar(rs.getDouble("AVG_R_STAR"));
 
         return trainerSearchDto;
     }

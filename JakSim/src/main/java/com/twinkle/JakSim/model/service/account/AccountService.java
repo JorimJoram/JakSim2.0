@@ -28,19 +28,14 @@ public class AccountService {
 
     @Transactional
     public int CreateMember(UserDto member){
-        UserDto userDto = new UserDto();
-
-        userDto.setId(member.getId());
-        userDto.setPw(passwordEncoder.encode(member.getPw()));
-        userDto.setName(member.getName());
-        userDto.setGender(member.getGender());
-        userDto.setTel(member.getTel());
-        userDto.setBirth(member.getBirth());
-        userDto.setEmail(member.getEmail());
-        userDto.setRole(member.getRole());
-
-        //정상
-        return userDao.insertMember(userDto);
+        int result = -1;
+        try{
+            member.setPw(passwordEncoder.encode(member.getPw()));
+            result = userDao.insertMember(member);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return result;
     }
 
     public UserDto findByUsername(String id) {

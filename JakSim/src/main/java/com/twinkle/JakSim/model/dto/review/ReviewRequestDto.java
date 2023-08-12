@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewRequestDto {
-    private int reviewId;
+    private int reviewIdx;
     private String userId;
-    private int trainerId;
+    private int payment_idx;
     private String reviewContent;
     private int star;
     private String reviewCreateDate;

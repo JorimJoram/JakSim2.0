@@ -23,7 +23,7 @@ public class EmailRestApi {
         return accountService.updateEmail(userDto.getEmail(), user.getUsername());
     }
 
-    @GetMapping("/dup-verify")
+    @GetMapping("/verify-email")
     public boolean emailDuplicateVerify(@RequestParam String email){
         return accountService.findByEmail(email).isEmpty();
     }
