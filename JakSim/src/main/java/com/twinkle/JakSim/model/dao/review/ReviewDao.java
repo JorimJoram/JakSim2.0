@@ -62,6 +62,68 @@ public class ReviewDao {
         return result;
     }
 
+    public ReviewDto getReviewByTid(String tid) {
+        this.sql = "SELECT * FROM REVIEW " +
+                "WHERE TID = ?";
+        ReviewDto dto = new ReviewDto();
+        try{
+            dto = jdbcTemplate.queryForObject(sql, new ReviewRowMapper(), tid);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return dto;
+    }
+
+    public List<ReviewDto> getReviewListByTpIdx(int tp_idx, boolean sort, int star) {
+        this.sql = "SELECT R.R_IDX, R.USER_ID, R.R_CONTENT, R.R_STAR, R.R_C_DT, R.R_M_DT, R.TID " +
+                "FROM PAYMENT P, REVIEW R " +
+                "WHERE " +
+                "P.TID = R.TID " +
+                "AND " +
+                "P.TP_IDX = ? " +
+                checkStar(star) +
+                checkSort(sort);
+        List<ReviewDto> dtoList = new ArrayList<>();
+        try{
+            dtoList = (checkStar(star).isEmpty()) ? jdbcTemplate.query(sql, new ReviewRowMapper(), tp_idx) : jdbcTemplate.query(sql, new ReviewRowMapper(), tp_idx, star);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        return dtoList;
+    }
+
+    public List<ReviewDto> getReviewListByUtIdx(int ut_idx, boolean sort, int star) {
+        this.sql = "SELECT R.R_IDX, R.USER_ID, R.R_CONTENT, R.R_STAR, R.R_C_DT, R.R_M_DT, R.TID " +
+                "FROM PAYMENT P, REVIEW R, TRAINER_DETAILS T, PRODUCT PR " +
+                "WHERE " +
+                "T.UT_IDX = PR.UT_IDX and " +
+                "PR.TP_IDX = P.TP_IDX and " +
+                "P.TID = R.TID and " +
+                "T.UT_IDX = ? " +
+                checkStar(star) +
+                checkSort(sort);
+        List<ReviewDto> dtoList = new ArrayList<>();
+        try{
+            dtoList = (checkStar(star).isEmpty()) ? jdbcTemplate.query(sql, new ReviewRowMapper(), ut_idx) : jdbcTemplate.query(sql, new ReviewRowMapper(), ut_idx, star);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return dtoList;
+    }
+
+    private String checkSort(boolean sort) {
+        return sort ? " ORDER BY R.R_STAR DESC, R.R_C_DT DESC" : "";
+    }
+
+    private String checkStar(int star) {
+        return ((1 <= star) && (star <= 5)) ? "AND R.R_STAR = ?" : "";
+    }
+
+
+
+
+
 
     // 트레이너 리뷰 미리보기 (최신순)
     public List<ReviewDto> getTrainerReview(int trainerId) {

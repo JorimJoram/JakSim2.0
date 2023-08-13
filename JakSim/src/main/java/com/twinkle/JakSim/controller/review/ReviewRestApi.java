@@ -7,6 +7,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/review/api")
@@ -23,9 +26,24 @@ public class ReviewRestApi {
     }
 
     @PutMapping("/modify/{r_idx}")
-    public int mondifyReview(@PathVariable("r_idx") int r_idx, @RequestBody ReviewDto dto){
+    public int modifyReview(@PathVariable("r_idx") int r_idx, @RequestBody ReviewDto dto){
         return reviewService.updateReview(r_idx, dto);
     }
 
+    @GetMapping("/get/{tid}")
+    public ReviewDto getSingleReviewByTid(@PathVariable("tid") String tid){
+        return reviewService.getReviewByTid(tid);
+    }
 
+    @GetMapping("/get/all")
+    public List<ReviewDto> getReviewList(@RequestParam(defaultValue = "0") int tp_idx,
+                                         @RequestParam(defaultValue = "0") int ut_idx,
+                                         @RequestParam(defaultValue = "false") boolean sort,
+                                         @RequestParam(defaultValue = "0") int star){
+        List<ReviewDto> reviewList = new ArrayList<>();
+        if(((tp_idx == 0) ^ (ut_idx == 0))){
+            reviewList = tp_idx == 0 ? reviewService.getReviewListByUtIdx(ut_idx, sort, star) : reviewService.getReviewListByTpIdx(tp_idx, sort, star);
+        }
+        return reviewList;
+    }
 }

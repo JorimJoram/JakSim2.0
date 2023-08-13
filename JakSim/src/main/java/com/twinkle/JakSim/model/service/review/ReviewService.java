@@ -34,6 +34,20 @@ public class ReviewService {
         return reviewDao.updateReview(r_idx, dto);
     }
 
+    public ReviewDto getReviewByTid(String tid) {
+        return reviewDao.getReviewByTid(tid);
+    }
+
+    public List<ReviewDto> getReviewListByTpIdx(int tp_idx, boolean sort, int star) {
+        return reviewDao.getReviewListByTpIdx(tp_idx, sort, star);
+    }
+
+    public List<ReviewDto> getReviewListByUtIdx(int ut_idx, boolean sort, int star) {
+        return reviewDao.getReviewListByUtIdx(ut_idx, sort, star);
+    }
+
+
+
     // 리뷰 수정하기
     @Transactional
     public void editReview(ReviewDto review, String userId) {

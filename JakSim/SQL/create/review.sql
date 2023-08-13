@@ -33,3 +33,14 @@ VALUES(NULL, 'test2', 'test93', 4, '시설도 좋고 트레이너쌤도 친절�
 
 INSERT INTO REVIEW
 VALUES(NULL, 'test96', 2, '트레이너쌤이 불친절해요. 근데 잘 가르쳐주는듯.', 3, current_timestamp, NULL);
+
+SELECT T.UT_IDX, P.TP_IDX, R.R_IDX, R.USER_ID, R.R_CONTENT, R.R_STAR, R.R_C_DT, R.R_M_DT, R.TID
+FROM PAYMENT P, REVIEW R, TRAINER_DETAILS T, PRODUCT PR
+WHERE
+    T.UT_IDX = PR.UT_IDX
+    AND
+    PR.TP_IDX = P.TP_IDX
+    AND
+    P.TID = R.TID
+    AND
+    T.UT_IDX = 11;
