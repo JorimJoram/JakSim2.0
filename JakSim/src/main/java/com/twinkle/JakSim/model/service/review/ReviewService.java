@@ -21,8 +21,8 @@ public class ReviewService {
 
     // 리뷰 등록
     @Transactional
-    public void insertReview(ReviewRequestDto dto, String userId) {
-        reviewDao.insertReview(dto, userId);
+    public int insertReview(String tid, ReviewRequestDto dto, String userId) {
+        return reviewDao.insertReview(tid, dto, userId);
     }
 
     // 리뷰 수정하기

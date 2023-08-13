@@ -89,6 +89,7 @@ public class PaymentController {
                 item -> {
                     model.addAttribute("apiResponse", kakaoPayService.kakaoList(tid));
                     model.addAttribute("payment", item);
+                    System.out.println(item.getTp_idx());
                     ProductDto product = paymentService.getProductByIdx(item.getTp_idx());
                     model.addAttribute("product", product);
                     model.addAttribute("trainer", trainerService.searchByUsername(product.getTrainerId())); // 수정함

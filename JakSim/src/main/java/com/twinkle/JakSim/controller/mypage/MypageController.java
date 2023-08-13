@@ -38,7 +38,6 @@ public class MypageController {
         model.addAttribute("log", loginLogService.findByUsernameRecent(user.getUsername()));
         paymentService.getRecentPaymentBy3(user.getUsername()).ifPresent(item -> {
             if(!item.isEmpty()){
-                System.out.println(item.toString());
                 model.addAttribute("payment", item);
             }
         });

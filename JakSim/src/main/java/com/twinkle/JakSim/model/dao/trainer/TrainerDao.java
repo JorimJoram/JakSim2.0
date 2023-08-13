@@ -95,17 +95,18 @@ public class TrainerDao {
         if((!address.equals("-")) && (filter == -1)){
 
             String sql = "SELECT DISTINCT td.user_id, td.UT_IDX, td.UT_PROFILE_IMG, ti.TI_PATH, td.UT_GYM, ui.user_name, " +
-                    "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME " +
+                    "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME, ROUND(AVG(R.R_STAR), 1) as AVG_R_STAR " +
                     " FROM trainer_details td" +
                     " JOIN product p ON td.UT_IDX = p.UT_IDX" +
                     " JOIN trainer_career tca ON td.UT_IDX = tca.UT_IDX" +
                     " JOIN trainer_cert tc ON td.UT_IDX = tc.UT_IDX" +
                     " JOIN trainer_image ti ON td.UT_IDX = ti.UT_IDX" +
                     " JOIN user_info ui ON td.user_id = ui.user_id" +
-                    //" LEFT JOIN review r ON td.UT_IDX = r.UT_IDX" +
+                    " LEFT JOIN PAYMENT PA ON P.TP_IDX = PA.TP_IDX" +
+                    " LEFT JOIN REVIEW R ON PA.TID = R.TID" +
                     " where ut_address LIKE ?" +
                     " GROUP BY td.user_id" +
-                    " ORDER BY td.UT_IDX DESC" +
+                    " ORDER BY AVG_R_STAR DESC, td.UT_IDX DESC" +
                     " LIMIT ?, ?";
 
             dtoList = jdbcTemplate.query(sql, new Object[]{"%" + address + "%", offset, pageSize}, new TrainerSearchRowMapper());
@@ -114,17 +115,18 @@ public class TrainerDao {
         else if((address.equals("-")) && (filter != -1)) {
 
             String sql = "SELECT DISTINCT td.user_id, td.UT_IDX, td.UT_PROFILE_IMG, ti.TI_PATH, td.UT_GYM, ui.user_name, " +
-                    "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME " +
+                    "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME, ROUND(AVG(R.R_STAR), 1) as R_AVG_STAR  " +
                     " FROM trainer_details td" +
                     " JOIN product p ON td.UT_IDX = p.UT_IDX" +
                     " JOIN trainer_career tca ON td.UT_IDX = tca.UT_IDX" +
                     " JOIN trainer_cert tc ON td.UT_IDX = tc.UT_IDX" +
                     " JOIN trainer_image ti ON td.UT_IDX = ti.UT_IDX" +
                     " JOIN user_info ui ON td.user_id = ui.user_id" +
-                    //" LEFT JOIN review r ON td.UT_IDX = r.UT_IDX" +
+                    " LEFT JOIN PAYMENT PA ON P.TP_IDX = PA.TP_IDX" +
+                    " LEFT JOIN REVIEW R ON PA.TID = R.TID" +
                     " where ut_expert_1 = ? or ut_expert_2 = ? " +
                     " GROUP BY td.user_id" +
-                    " ORDER BY td.UT_IDX DESC" +
+                    " ORDER BY R_AVG_STAR DESC, td.UT_IDX DESC" +
                     " LIMIT ?, ?";
 
             dtoList = jdbcTemplate.query(sql, new Object[]{filter, filter, offset, pageSize}, new TrainerSearchRowMapper());
@@ -132,18 +134,19 @@ public class TrainerDao {
         }
         else if((!address.equals("-")) && (filter != -1)) {
             String sql = "SELECT DISTINCT td.user_id, td.UT_IDX, td.UT_PROFILE_IMG, ti.TI_PATH, td.UT_GYM, ui.user_name, " +
-                    "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME " +
+                    "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME, ROUND(AVG(R.R_STAR), 1) as R_AVG_STAR  " +
                     " FROM trainer_details td" +
                     " JOIN product p ON td.UT_IDX = p.UT_IDX" +
                     " JOIN trainer_career tca ON td.UT_IDX = tca.UT_IDX" +
                     " JOIN trainer_cert tc ON td.UT_IDX = tc.UT_IDX" +
                     " JOIN trainer_image ti ON td.UT_IDX = ti.UT_IDX" +
                     " JOIN user_info ui ON td.user_id = ui.user_id" +
-                    //" LEFT JOIN review r ON td.UT_IDX = r.UT_IDX" +
+                    " LEFT JOIN PAYMENT PA ON P.TP_IDX = PA.TP_IDX" +
+                    " LEFT JOIN REVIEW R ON PA.TID = R.TID" +
                     " where ut_address LIKE ?" +
                     " and ut_expert_1 = ? or ut_expert_2 = ? " +
                     " GROUP BY td.user_id" +
-                    " ORDER BY td.UT_IDX DESC" +
+                    " ORDER BY R_AVG_STAR DESC, td.UT_IDX DESC" +
                     " LIMIT ?, ?";
 
             dtoList =  jdbcTemplate.query(sql, new Object[]{"%" + address + "%", filter, filter, offset, pageSize}, new TrainerSearchRowMapper());
@@ -152,56 +155,24 @@ public class TrainerDao {
         else {
 
             String sql = "SELECT DISTINCT td.user_id, td.UT_IDX, td.UT_PROFILE_IMG, ti.TI_PATH, td.UT_GYM, ui.user_name, " +
-                    "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME " +
+                    "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME, ROUND(AVG(R.R_STAR), 1) as R_AVG_STAR " +
                     " FROM trainer_details td" +
                     " JOIN product p ON td.UT_IDX = p.UT_IDX" +
                     " JOIN trainer_career tca ON td.UT_IDX = tca.UT_IDX" +
                     " JOIN trainer_cert tc ON td.UT_IDX = tc.UT_IDX" +
                     " JOIN trainer_image ti ON td.UT_IDX = ti.UT_IDX" +
                     " JOIN user_info ui ON td.user_id = ui.user_id" +
-                    //" LEFT JOIN review r ON td.UT_IDX = r.UT_IDX" +
+                    " LEFT JOIN PAYMENT PA ON P.TP_IDX = PA.TP_IDX" +
+                    " LEFT JOIN REVIEW R ON PA.TID = R.TID" +
                     " GROUP BY td.user_id" +
-                    " ORDER BY td.UT_IDX DESC" +
+                    " ORDER BY R_AVG_STAR DESC, td.UT_IDX DESC" +
                     " LIMIT ?, ?";
 
             dtoList = jdbcTemplate.query(sql, new Object[]{offset, pageSize}, new TrainerSearchRowMapper());
 
         }
 
-        dtoList.forEach((item) -> {
-            item.setAvgRstar(getStars(item.getTrainerId()));
-        });
-
         return dtoList;
-    }
-
-    private double getStars(int utIdx) {
-        String sql = "SELECT " +
-                "ROUND(AVG(REVIEW.R_STAR), 1) AS R_STAR_AVG " +
-                "FROM PRODUCT, PAYMENT, REVIEW " +
-                "WHERE " +
-                "PRODUCT.TP_IDX = PAYMENT.TP_IDX " +
-                "AND " +
-                "PAYMENT.TID = REVIEW.TID " +
-                "AND " +
-                "UT_IDX = ? " +
-                "GROUP BY PAYMENT.TP_IDX";
-        TrainerSearchDto dto = new TrainerSearchDto();
-        try{
-            dto = jdbcTemplate.queryForObject(sql, new RowMapper<TrainerSearchDto>() {
-                @Override
-                public TrainerSearchDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    TrainerSearchDto tmp = new TrainerSearchDto();
-                    tmp.setAvgRstar(rs.getDouble("R_STAR_AVG"));
-                    System.out.println(tmp.getAvgRstar());
-                    return tmp;
-                }
-            }, utIdx);
-        }catch (Exception e){
-            dto.setAvgRstar(0);
-            System.out.println(e.getMessage());
-        }
-        return Objects.requireNonNull(dto).getAvgRstar();
     }
 
     // 2-1. 트레이너 count
@@ -243,22 +214,24 @@ public class TrainerDao {
     // 메인 페이지
     public List<TrainerSearchDto> getAllTrainerForMainPage() {
         String sql = "SELECT DISTINCT td.user_id, td.UT_IDX, td.UT_PROFILE_IMG, ti.TI_PATH, td.UT_GYM, ui.user_name, " +
-                "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME" +
+                "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME, ROUND(AVG(R.R_STAR), 1) as R_AVG_STAR " +
                 " FROM trainer_details td" +
                 " JOIN product p ON td.UT_IDX = p.UT_IDX" +
                 " JOIN trainer_career tca ON td.UT_IDX = tca.UT_IDX" +
                 " JOIN trainer_cert tc ON td.UT_IDX = tc.UT_IDX" +
                 " JOIN trainer_image ti ON td.UT_IDX = ti.UT_IDX" +
                 " JOIN user_info ui ON td.user_id = ui.user_id" +
-                //" LEFT JOIN review r ON td.UT_IDX = r.UT_IDX" +
+                " LEFT JOIN PAYMENT PA ON P.TP_IDX = PA.TP_IDX" +
+                " LEFT JOIN REVIEW R ON PA.TID = R.TID" +
                 " GROUP BY td.user_id" +
-                " ORDER BY td.UT_IDX DESC" +
+                " ORDER BY R_AVG_STAR DESC, td.UT_IDX DESC" +
                 " LIMIT 3";
 
         return jdbcTemplate.query(sql, new TrainerSearchRowMapper());
     }
 
     // 트레이너 이름, 인덱스 가져오기
+    // 메서드 이름을 변경하면 좋을 거 같습니다. name은 겹치는 컬럼명이 있어서 userId 혹은 username 으로 수정해주시길 권합니다.
     public TrainerPageDto getTrainerName(String userId) {
         String sql = "SELECT DISTINCT * " +
                 "FROM trainer_details td " +
@@ -274,58 +247,6 @@ public class TrainerDao {
         }
     }
 
-    public TrainerSearchDto getTrainerByUtIdx(int utIdx){
-        String sql = "SELECT DISTINCT td.user_id, td.UT_IDX, td.UT_PROFILE_IMG, ti.TI_PATH, td.UT_GYM, ui.user_name, " +
-                "td.UT_EXPERT_1, td.UT_EXPERT_2, td.UT_ADDRESS, tc.TC_NAME" +
-                " FROM trainer_details td" +
-                " JOIN product p ON td.UT_IDX = p.UT_IDX" +
-                " JOIN trainer_career tca ON td.UT_IDX = tca.UT_IDX" +
-                " JOIN trainer_cert tc ON td.UT_IDX = tc.UT_IDX" +
-                " JOIN trainer_image ti ON td.UT_IDX = ti.UT_IDX" +
-                " JOIN user_info ui ON td.user_id = ui.user_id" +
-                " WHERE td.UT_IDX = ?" +
-                " LIMIT 3";
-        TrainerSearchDto dto = new TrainerSearchDto();
-        try{
-            dto = jdbcTemplate.queryForObject(sql, new TrainerSearchRowMapper(), utIdx);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-
-        return dto;
-    }
-
-    public List<TrainerSearchDto> getMainTrainerAvgStar() {
-        String sql =  queryForAvgStar() + "LIMIT 3";
-
-        List<TrainerSearchDto> dtoList = new ArrayList<>();
-        try{
-            dtoList = jdbcTemplate.query(sql, new RowMapper<TrainerSearchDto>() {
-                @Override
-                public TrainerSearchDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    TrainerSearchDto dto = new TrainerSearchDto();
-                    dto.setAvgRstar(rs.getDouble("AVG_R_STAR"));
-                    dto.setTrainerId(rs.getInt("UT_IDX"));
-                    return dto;
-                }
-            });
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-
-        return dtoList;
-    }
-
-    private String queryForAvgStar(){
-        return "SELECT PRODUCT.UT_IDX, ROUND(AVG(REVIEW.R_STAR), 1) AS AVG_R_STAR " +
-                "FROM PRODUCT, PAYMENT, REVIEW " +
-                "WHERE " +
-                "PRODUCT.TP_IDX = PAYMENT.TP_IDX " +
-                "AND " +
-                "PAYMENT.TID = REVIEW.TID " +
-                "GROUP BY PAYMENT.TP_IDX " +
-                "ORDER BY PAYMENT.TP_IDX DESC ";
-    }
 
     // 트레이너 상세페이지
     public List<TrainerPageDto> getTrainerPage(int utIdx) {

@@ -142,12 +142,7 @@ public class TrainerService {
     // 메인페이지 트레이너 (최신등록순)
     @Transactional
     public List<TrainerSearchDto> searchTrainerForMainPage() {
-        List<TrainerSearchDto> dtoList = trainerDao.getMainTrainerAvgStar();
-        dtoList.forEach((item) -> {
-            setMapping(item, trainerDao.getTrainerByUtIdx(item.getTrainerId()));
-        });
-
-        return dtoList;
+        return trainerDao.getAllTrainerForMainPage();
     }
 
     private void setMapping(TrainerSearchDto item, TrainerSearchDto dto) {

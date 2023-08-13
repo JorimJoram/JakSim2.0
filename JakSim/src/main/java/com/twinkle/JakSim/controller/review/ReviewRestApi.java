@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewRestApi {
     private final ReviewService reviewService;
     @PostMapping("/register/{tid}")
-    public int registerReview(@PathVariable("tid") int tid, @AuthenticationPrincipal User user, ReviewRequestDto dto){
-        reviewService.insertReview(dto, user.getUsername());
-        return 0;
+    public int registerReview(@PathVariable("tid") String tid, @AuthenticationPrincipal User user, @RequestBody ReviewRequestDto dto){
+        System.out.println(dto.toString());
+        return reviewService.insertReview(tid, dto, user.getUsername());
     }
 
-    @PutMapping("/modify/{r_dix}")
+    @PutMapping("/modify/{r_idx}")
     public int modifyReview(@PathVariable("r_idx") int r_idx, @AuthenticationPrincipal User user, ReviewRequestDto dto){
         return 0;
     }

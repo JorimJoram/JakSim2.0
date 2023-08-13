@@ -15,10 +15,10 @@ public class ReviewRowMapper implements RowMapper<ReviewRequestDto> {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(("yyyy-MM-dd HH:mm:ss"));
 
-        //reviewRequestDto.setReviewId(rs.getInt("R_IDX"));
+        reviewRequestDto.setReviewIdx(rs.getInt("R_IDX"));
         reviewRequestDto.setUserId(rs.getString("USER_ID"));
         //reviewRequestDto.setTrainerId(rs.getInt("UT_IDX"));
-        reviewRequestDto.setReviewContent(rs.getString("R_CONTENT"));
+        reviewRequestDto.setContent(rs.getString("R_CONTENT"));
         reviewRequestDto.setStar(rs.getInt("R_STAR"));
 
         reviewRequestDto.setReviewCreateDate(rs.getTimestamp("R_C_DT").toLocalDateTime().format(formatter));

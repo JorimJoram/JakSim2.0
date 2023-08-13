@@ -15,7 +15,7 @@ public class ReviewRequestDto {
     private int reviewIdx;
     private String userId;
     private int payment_idx;
-    private String reviewContent;
+    private String content;
     private int star;
     private String reviewCreateDate;
     private String reviewModifyDate;

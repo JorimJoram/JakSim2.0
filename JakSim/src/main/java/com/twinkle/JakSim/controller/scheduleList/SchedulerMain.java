@@ -21,6 +21,9 @@ public class SchedulerMain {
 
     @GetMapping("")
     public String scheduler(@AuthenticationPrincipal User user, Model model) {
+        if(user == null){
+            return "redirect:/login";
+        }
         String isUser = "USER";
         if(user != null) {
             model.addAttribute("name", trainerService.searchTrainerName(user.getUsername()));

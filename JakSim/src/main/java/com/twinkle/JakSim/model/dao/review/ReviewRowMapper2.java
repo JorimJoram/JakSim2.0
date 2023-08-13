@@ -18,7 +18,7 @@ public class ReviewRowMapper2 implements RowMapper<ReviewRequestDto> {
         //reviewRequestDto.setReviewId(rs.getInt("R_IDX"));
         reviewRequestDto.setUserId(rs.getString("USER_ID"));
         //reviewRequestDto.setTrainerId(rs.getInt("UT_IDX"));
-        reviewRequestDto.setReviewContent(rs.getString("R_CONTENT"));
+        reviewRequestDto.setContent(rs.getString("R_CONTENT"));
         reviewRequestDto.setStar(rs.getInt("R_STAR"));
 
         //reviewRequestDto.setReviewCreateDate(rs.getTimestamp("R_C_DT").toLocalDateTime().format(formatter));

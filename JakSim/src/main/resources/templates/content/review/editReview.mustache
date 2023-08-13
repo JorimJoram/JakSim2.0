@@ -8,7 +8,7 @@
         margin-bottom: 30px;
         margin-left: 50px;">리뷰 수정</h3>
 </div>
-<form id="review-form" action="/editMyReview" method="POST">
+<div id="review-form">
         <div class="review-star">
             <label for="review-star">별점</label>
             <select class="star_select" id="star" name="star" value="{{#review}}{{star}}{{/review}}" style="margin-left: 10px;">
@@ -34,24 +34,6 @@
             window.history.back();
         }
     </script>
-</form>
+</div>
 
 {{>layout/footer}}
-
-<script>
-window.onload = function() {
-    // expert1 값에 따라 option 선택
-var starValue = "{{#review}}{{star}}{{/review}}";
-var starSelect = document.getElementsByName("star")[0];
-
-// option value에 해당하는 인덱스를 찾아 선택
-for (var i = 0; i < starSelect.options.length; i++) {
-    if (starSelect.options[i].value === starValue) {
-        starSelect.selectedIndex = i;
-        break;
-    }
-}
-
-}
-
-</script>

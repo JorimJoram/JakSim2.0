@@ -17,19 +17,14 @@ public class ReviewDao {
     private JdbcTemplate jdbcTemplate;
     private String sql;
 
-    /**
-     * TRAINER_ID 누락
-     * @param userId
-     */
-
     // 리뷰 등록
-    public int insertReview(ReviewRequestDto dto, String userId) {
-        this.sql = "INSERT INTO REVIEW(USER_ID, P_IDX, R_CONTENT, R_STAR, R_C_DT) " +
+    public int insertReview(String tid, ReviewRequestDto dto, String userId) {
+        this.sql = "INSERT INTO REVIEW(USER_ID, TID, R_CONTENT, R_STAR, R_C_DT) " +
                 "VALUES(?, ?, ?, ?, CURRENT_TIMESTAMP)";
         int result = -1;
 
         try{
-            result = jdbcTemplate.update(this.sql, userId, dto.getPayment_idx(), dto.getReviewContent(), dto.getStar());
+            result = jdbcTemplate.update(this.sql, userId, tid, dto.getContent(), dto.getStar());
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -123,7 +118,7 @@ public class ReviewDao {
         this.sql = "UPDATE REVIEW SET R_CONTENT = ?, R_STAR = ?, R_M_DT = current_timestamp " +
                 "WHERE USER_ID = ?";
 
-        jdbcTemplate.update(this.sql, review.getReviewContent(),
+        jdbcTemplate.update(this.sql, review.getContent(),
                 review.getStar(), userId);
 
     }

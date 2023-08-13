@@ -32,7 +32,11 @@ public class AccountController {
 
         String url = request.getHeader("Referer");
 
-        if (url != null && !url.contains("/login")) {
+        if(request.getSession().getAttribute("prevPage") != null){
+            request.getSession().removeAttribute("prevPage");
+        }
+
+        if (url != null && !url.contains("/login") && url.contains("/find")) {
             request.getSession().setAttribute("prevPage", url);
         }
         return String.format(this.defaultPath + "login");

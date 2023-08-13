@@ -23,16 +23,9 @@ public class ReviewController {
     @GetMapping("/registerReview/{tid}")
     public String registerMyReview(Model model, @PathVariable("tid") String tid, @AuthenticationPrincipal User info) {
         model.addAttribute("head_title", "리뷰 등록");
+
         return "content/review/registerReview";
     }
-
-//    @PostMapping("/registerReview/{trainerIdx}")
-//    public String registerReview(@PathVariable("trainerIdx") int trainerIdx, @AuthenticationPrincipal User info,
-//                                 ReviewRequestDto reviewRequestDto) {
-//        reviewService.insertReview(reviewRequestDto, info.getUsername(), trainerIdx);
-//
-//        return "redirect:/";
-//    }
 
     // 리뷰 수정
     @GetMapping("/review/editReview/{reviewIdx}")
