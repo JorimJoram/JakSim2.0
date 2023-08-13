@@ -1,6 +1,6 @@
 package com.twinkle.JakSim.controller.review;
 
-import com.twinkle.JakSim.model.dto.review.ReviewRequestDto;
+import com.twinkle.JakSim.model.dto.review.ReviewDto;
 import com.twinkle.JakSim.model.service.account.FileService;
 import com.twinkle.JakSim.model.service.review.ReviewService;
 import com.twinkle.JakSim.model.service.trainer.TrainerService;
@@ -30,7 +30,7 @@ public class ReviewController {
     // 리뷰 수정
     @GetMapping("/review/editReview/{reviewIdx}")
     public String editReview(@PathVariable("reviewIdx") int reviewIdx, Model model, @AuthenticationPrincipal User info,
-                             ReviewRequestDto reviewRequestDto) {
+                             ReviewDto ReviewDto) {
         if(info != null) {
             model.addAttribute("profile_image", fileService.getSingeProfile(info.getUsername()));
         }
@@ -42,18 +42,18 @@ public class ReviewController {
     }
 
     @PostMapping("/editMyReview")
-    public String editMyReview(@AuthenticationPrincipal User info, ReviewRequestDto reviewRequestDto) {
-        reviewService.editReview(reviewRequestDto, info.getUsername());
+    public String editMyReview(@AuthenticationPrincipal User info, ReviewDto ReviewDto) {
+        reviewService.editReview(ReviewDto, info.getUsername());
 
         return "redirect:/trainer/trainerSearch";
     }
 
-    @PostMapping("/deleteReview")
-    public String deleteMyReview(@AuthenticationPrincipal User info) {
-        reviewService.deleteReview(info.getUsername());
-
-        return "redirect:/trainer/trainerSearch";
-    }
+//    @PostMapping("/deleteReview")
+//    public String deleteMyReview(@AuthenticationPrincipal User info) {
+//        reviewService.deleteReview(info.getUsername());
+//
+//        return "redirect:/trainer/trainerSearch";
+//    }
 
     @GetMapping("/review/list")
     public String getList(){

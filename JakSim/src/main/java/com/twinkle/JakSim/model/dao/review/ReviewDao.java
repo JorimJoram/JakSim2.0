@@ -2,7 +2,7 @@ package com.twinkle.JakSim.model.dao.review;
 
 import com.twinkle.JakSim.model.dao.trainer.PtUserRowMapper;
 import com.twinkle.JakSim.model.dto.review.ReviewDto;
-import com.twinkle.JakSim.model.dto.review.ReviewRequestDto;
+import com.twinkle.JakSim.model.dto.review.ReviewDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -18,7 +18,7 @@ public class ReviewDao {
     private String sql;
 
     // 리뷰 등록
-    public int insertReview(String tid, ReviewRequestDto dto, String userId) {
+    public int insertReview(String tid, ReviewDto dto, String userId) {
         this.sql = "INSERT INTO REVIEW(USER_ID, TID, R_CONTENT, R_STAR, R_C_DT) " +
                 "VALUES(?, ?, ?, ?, CURRENT_TIMESTAMP)";
         int result = -1;
@@ -31,8 +31,40 @@ public class ReviewDao {
         return result;
     }
 
+    public int updateReview(int r_idx, ReviewDto dto) {
+        this.sql = "UPDATE REVIEW " +
+                "SET " +
+                "R_CONTENT = ?, " +
+                "R_STAR = ?, " +
+                "R_M_DT = CURRENT_TIMESTAMP " +
+                "WHERE R_IDX = ?";
+        int result = -1;
+
+        try {
+            result = jdbcTemplate.update(sql, dto.getContent(), dto.getStar(), r_idx);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        return result;
+    }
+
+    public int deleteReview(int r_idx) {
+        this.sql = "DELETE FROM REVIEW WHERE R_IDX = ?";
+        int result = -1;
+
+        try{
+            result = jdbcTemplate.update(sql, r_idx);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        return result;
+    }
+
+
     // 트레이너 리뷰 미리보기 (최신순)
-    public List<ReviewRequestDto> getTrainerReview(int trainerId) {
+    public List<ReviewDto> getTrainerReview(int trainerId) {
         this.sql = "SELECT * " +
                 "FROM REVIEW " +
                 "WHERE UT_IDX = ? "+
@@ -43,7 +75,7 @@ public class ReviewDao {
     }
 
     // 트레이너 리뷰 전체보기
-    public List<ReviewRequestDto> getTrainerReviewAll(int page, int pageSize, int filter, int trainerId) {
+    public List<ReviewDto> getTrainerReviewAll(int page, int pageSize, int filter, int trainerId) {
         //1. 최신순 (기본)
         //2. 별점 높은순
         //3. 별점 낮은순
@@ -82,16 +114,16 @@ public class ReviewDao {
     }
 
     // 리뷰 별점 및 전체수 count
-    public ReviewRequestDto getStarAvgAndCnt(int utIdx) {
+    public ReviewDto getStarAvgAndCnt(int utIdx) {
         this.sql = "SELECT *, COUNT(*) AS REVIEW_CNT, ROUND(AVG(R_STAR), 1) AS AVG_R_STAR " +
                 "FROM REVIEW WHERE UT_IDX = ?";
 
-        return jdbcTemplate.queryForObject(this.sql, new ReviewRowMapper2(), utIdx);
-
+        //return jdbcTemplate.queryForObject(this.sql, new ReviewRowMapper2(), utIdx);
+        return null;
     }
 
     // 리뷰 정보 가져오기 (리뷰 인덱스별)
-    public List<ReviewRequestDto> getMyReview(String userId, int reviewIdx) {
+    public List<ReviewDto> getMyReview(String userId, int reviewIdx) {
         this.sql = "SELECT * FROM REVIEW " +
                 "WHERE USER_ID = ? AND R_IDX = ?";
 
@@ -99,12 +131,12 @@ public class ReviewDao {
     }
 
     // 나의 리뷰 전체 가져오기 (마이페이지용)
-    public Optional<List<ReviewRequestDto>> getMyReviewForMyPage(String userId) {
+    public Optional<List<ReviewDto>> getMyReviewForMyPage(String userId) {
         this.sql = "SELECT * FROM REVIEW R " +
                 "WHERE USER_ID = ? " +
                 "ORDER BY R_IDX DESC " +
                 "LIMIT 3";
-        List<ReviewRequestDto> reviewList = null;
+        List<ReviewDto> reviewList = null;
         try {
             reviewList = jdbcTemplate.query(this.sql, new ReviewRowMapper(), userId);
         }catch (Exception e){
@@ -114,20 +146,12 @@ public class ReviewDao {
     }
 
     // 리뷰 수정
-    public void editReview(ReviewRequestDto review, String userId) {
+    public void editReview(ReviewDto review, String userId) {
         this.sql = "UPDATE REVIEW SET R_CONTENT = ?, R_STAR = ?, R_M_DT = current_timestamp " +
                 "WHERE USER_ID = ?";
 
         jdbcTemplate.update(this.sql, review.getContent(),
                 review.getStar(), userId);
-
-    }
-
-    // 리뷰 삭제
-    public void deleteReview(String userId) {
-        this.sql = "DELETE FROM REVIEW WHERE USER_ID = ?";
-
-        jdbcTemplate.update(this.sql, userId);
 
     }
 }

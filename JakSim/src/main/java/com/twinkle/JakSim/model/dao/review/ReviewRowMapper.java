@@ -1,33 +1,29 @@
 package com.twinkle.JakSim.model.dao.review;
 
-import com.twinkle.JakSim.model.dto.review.ReviewRequestDto;
+import com.twinkle.JakSim.model.dto.review.ReviewDto;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
-public class ReviewRowMapper implements RowMapper<ReviewRequestDto> {
+public class ReviewRowMapper implements RowMapper<ReviewDto> {
     @Override
-    public ReviewRequestDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-
-        ReviewRequestDto reviewRequestDto = new ReviewRequestDto();
+    public ReviewDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+        ReviewDto ReviewDto = new ReviewDto();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(("yyyy-MM-dd HH:mm:ss"));
 
-        reviewRequestDto.setReviewIdx(rs.getInt("R_IDX"));
-        reviewRequestDto.setUserId(rs.getString("USER_ID"));
-        //reviewRequestDto.setTrainerId(rs.getInt("UT_IDX"));
-        reviewRequestDto.setContent(rs.getString("R_CONTENT"));
-        reviewRequestDto.setStar(rs.getInt("R_STAR"));
-
-        reviewRequestDto.setReviewCreateDate(rs.getTimestamp("R_C_DT").toLocalDateTime().format(formatter));
-
+        ReviewDto.setIdx(rs.getInt("R_IDX"));
+        ReviewDto.setUserId(rs.getString("USER_ID"));
+        ReviewDto.setTid(rs.getString("TID"));
+        ReviewDto.setContent(rs.getString("R_CONTENT"));
+        ReviewDto.setStar(rs.getInt("R_STAR"));
+        ReviewDto.setC_dt(rs.getTimestamp("R_C_DT").toLocalDateTime().format(formatter));
         if(rs.getString("R_M_DT") != null) {
-            reviewRequestDto.setReviewModifyDate(rs.getTimestamp("R_M_DT").toLocalDateTime().format(formatter));
+            ReviewDto.setC_dt(rs.getTimestamp("R_M_DT").toLocalDateTime().format(formatter));
         }
 
-
-        return reviewRequestDto;
+        return ReviewDto;
     }
 }

@@ -1,6 +1,6 @@
 package com.twinkle.JakSim.controller.review;
 
-import com.twinkle.JakSim.model.dto.review.ReviewRequestDto;
+import com.twinkle.JakSim.model.dto.review.ReviewDto;
 import com.twinkle.JakSim.model.service.review.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,19 +13,18 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewRestApi {
     private final ReviewService reviewService;
     @PostMapping("/register/{tid}")
-    public int registerReview(@PathVariable("tid") String tid, @AuthenticationPrincipal User user, @RequestBody ReviewRequestDto dto){
-        System.out.println(dto.toString());
+    public int registerReview(@PathVariable("tid") String tid, @AuthenticationPrincipal User user, @RequestBody ReviewDto dto){
         return reviewService.insertReview(tid, dto, user.getUsername());
     }
 
-    @PutMapping("/modify/{r_idx}")
-    public int modifyReview(@PathVariable("r_idx") int r_idx, @AuthenticationPrincipal User user, ReviewRequestDto dto){
-        return 0;
+    @DeleteMapping("/delete/{r_idx}")
+    public int deleteReview(@PathVariable("r_idx") int r_idx){
+        return reviewService.deleteReview(r_idx);
     }
 
-    @DeleteMapping("/delete/{r_idx}")
-    public int deleteReview(@PathVariable("r_idx") int r_idx, @AuthenticationPrincipal User user){
-        return 0;
+    @PutMapping("/modify/{r_idx}")
+    public int mondifyReview(@PathVariable("r_idx") int r_idx, @RequestBody ReviewDto dto){
+        return reviewService.updateReview(r_idx, dto);
     }
 
 

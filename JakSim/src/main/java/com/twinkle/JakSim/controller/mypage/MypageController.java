@@ -41,8 +41,8 @@ public class MypageController {
                 model.addAttribute("payment", item);
             }
         });
-        reviewService.showMyReviewForMyPage(user.getUsername()).ifPresent(reviewRequestDtos -> {if (!reviewRequestDtos.isEmpty()) {
-            model.addAttribute("reviewList", reviewRequestDtos);
+        reviewService.showMyReviewForMyPage(user.getUsername()).ifPresent(ReviewDtos -> {if (!ReviewDtos.isEmpty()) {
+            model.addAttribute("reviewList", ReviewDtos);
         }});
 
         return String.format(defaultPath + "mypage");

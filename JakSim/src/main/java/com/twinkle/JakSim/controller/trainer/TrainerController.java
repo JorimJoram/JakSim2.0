@@ -1,6 +1,6 @@
 package com.twinkle.JakSim.controller.trainer;
 
-import com.twinkle.JakSim.model.dto.review.ReviewRequestDto;
+import com.twinkle.JakSim.model.dto.review.ReviewDto;
 import com.twinkle.JakSim.model.dto.timetable.TimetableInsertDto;
 import com.twinkle.JakSim.model.dto.trainer.TrainerInsertDto;
 import com.twinkle.JakSim.model.dto.trainer.*;
@@ -98,8 +98,10 @@ public class TrainerController {
         model.addAttribute("head_title", "트레이너 상세페이지");
         model.addAttribute("session", info);
         model.addAttribute("trainer", trainerService.searchTrainer(trainerId));
+        //상세페이지 안보이면 여기임
         model.addAttribute("review", reviewService.showReview(trainerId));
         model.addAttribute("stars", reviewService.getStarAvgAndCnt(trainerId));
+
         model.addAttribute("product", trainerService.getProduct(trainerId));
         model.addAttribute("cert", trainerService.getCert(trainerId));
         model.addAttribute("career", trainerService.getCareer(trainerId));
@@ -127,7 +129,7 @@ public class TrainerController {
         model.addAttribute("trainer", trainerService.searchTrainer(trainerId));
 
         // 페이징을 위한 데이터 조회
-        List<ReviewRequestDto> review = reviewService.showReviewAll(page, pageSize, filter, trainerId);
+        List<ReviewDto> review = reviewService.showReviewAll(page, pageSize, filter, trainerId);
         model.addAttribute("review", review);
         int totalReview = reviewService.getStarAvgAndCnt(trainerId).getReviewCnt();
 
