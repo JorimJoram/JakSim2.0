@@ -20,8 +20,8 @@ public class ReviewRestApiTest {
     void Create(){
         ReviewDto dto = new ReviewDto();
         dto.setContent("Test at Spring");
-        dto.setStar(4);
-        dto.setUserId("west5");
+        dto.setStar(3);
+        dto.setUserId("west1");
         dto.setTid("T4d69e2b76b90283a2d4");
 
         String result = (reviewService.insertReview(dto.getTid(), dto, dto.getUserId()) > 0) ? "success" : "fail";
@@ -60,16 +60,18 @@ public class ReviewRestApiTest {
     @Test
     void getReviewListByTpIdx(){
         List<ReviewDto> list = reviewService.getReviewListByTpIdx(11, false, 2);
-        list.forEach((item) -> {
-            System.out.println(item.toString());
-        });
+        list.forEach((item) -> System.out.println(item.toString()));
     }
 
     @Test
     void getReviewListByUtIdx(){
         List<ReviewDto> list = reviewService.getReviewListByUtIdx(11, false, 0);
-        list.forEach((item) -> {
-            System.out.println(item.toString());
-        });
+        list.forEach((item) -> System.out.println(item.toString()));
+    }
+
+    @Test
+    void getReviewListByUsername(){
+        List<ReviewDto> list = reviewService.getReviewListByUsername("west1", true, true, 3);
+        list.forEach((item) -> System.out.println(item.toString()));
     }
 }

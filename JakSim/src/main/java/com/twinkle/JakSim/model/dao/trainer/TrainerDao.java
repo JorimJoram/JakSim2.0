@@ -1,29 +1,21 @@
 package com.twinkle.JakSim.model.dao.trainer;
 
-import com.twinkle.JakSim.model.dao.account.UserRowMapper;
 import com.twinkle.JakSim.model.dao.timetable.TimetableRowMapper;
-import com.twinkle.JakSim.model.dto.account.UserDto;
-import com.twinkle.JakSim.model.dto.review.ReviewDto;
 import com.twinkle.JakSim.model.dto.timetable.response.TimetableResponse;
 import com.twinkle.JakSim.model.dto.trainer.TrainerInsertDto;
 import com.twinkle.JakSim.model.dto.trainer.*;
 import com.twinkle.JakSim.model.dto.trainer.response.TrainerDetailResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @Repository
 @RequiredArgsConstructor
@@ -224,7 +216,7 @@ public class TrainerDao {
                 " LEFT JOIN PAYMENT PA ON P.TP_IDX = PA.TP_IDX" +
                 " LEFT JOIN REVIEW R ON PA.TID = R.TID" +
                 " GROUP BY td.user_id" +
-                " ORDER BY R_AVG_STAR DESC, td.UT_IDX DESC" +
+                " ORDER BY td.UT_IDX DESC" +
                 " LIMIT 3";
 
         return jdbcTemplate.query(sql, new TrainerSearchRowMapper());

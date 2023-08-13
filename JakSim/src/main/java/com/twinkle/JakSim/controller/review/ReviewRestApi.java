@@ -46,4 +46,12 @@ public class ReviewRestApi {
         }
         return reviewList;
     }
+
+    @GetMapping("/get/user")
+    public List<ReviewDto> getReviewListByUsername(@RequestParam(defaultValue = "false") boolean myPage,
+                                                   @RequestParam(defaultValue = "false") boolean sort,
+                                                   @RequestParam(defaultValue = "0") int star,
+                                                   @AuthenticationPrincipal User user){
+        return reviewService.getReviewListByUsername(user.getUsername(), myPage, sort, star);
+    }
 }

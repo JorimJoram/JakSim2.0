@@ -1,7 +1,5 @@
 package com.twinkle.JakSim.model.dao.review;
 
-import com.twinkle.JakSim.model.dao.trainer.PtUserRowMapper;
-import com.twinkle.JakSim.model.dto.review.ReviewDto;
 import com.twinkle.JakSim.model.dto.review.ReviewDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -112,12 +110,32 @@ public class ReviewDao {
         return dtoList;
     }
 
+    public List<ReviewDto> getReviewListByUsername(String username, boolean myPage, boolean sort, int star) {
+        this.sql = "SELECT R.R_IDX, R.USER_ID, R.R_CONTENT, R.R_STAR, R.R_C_DT, R.R_M_DT, R.TID " +
+                "FROM REVIEW R " +
+                "WHERE R.USER_ID = ? " +
+                checkStar(star) +
+                checkSort(sort) +
+                checkMyPage(myPage);
+        List<ReviewDto> dtoList = new ArrayList<>();
+        try{
+            dtoList = (checkStar(star).isEmpty()) ? jdbcTemplate.query(sql, new ReviewRowMapper(), username) : jdbcTemplate.query(sql, new ReviewRowMapper(), username, star);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return dtoList;
+    }
+
+    private String checkMyPage(boolean myPage){
+        return myPage ? "LIMIT 3 " : "";
+    }
+
     private String checkSort(boolean sort) {
-        return sort ? " ORDER BY R.R_STAR DESC, R.R_C_DT DESC" : "";
+        return sort ? " ORDER BY R.R_STAR DESC, R.R_C_DT DESC " : "";
     }
 
     private String checkStar(int star) {
-        return ((1 <= star) && (star <= 5)) ? "AND R.R_STAR = ?" : "";
+        return ((1 <= star) && (star <= 5)) ? "AND R.R_STAR = ? " : "";
     }
 
 
@@ -125,16 +143,6 @@ public class ReviewDao {
 
 
 
-    // 트레이너 리뷰 미리보기 (최신순)
-    public List<ReviewDto> getTrainerReview(int trainerId) {
-        this.sql = "SELECT * " +
-                "FROM REVIEW " +
-                "WHERE UT_IDX = ? "+
-                " ORDER BY R_IDX DESC" +
-                " LIMIT 3";
-
-        return jdbcTemplate.query(this.sql, new ReviewRowMapper(), trainerId);
-    }
 
     // 트레이너 리뷰 전체보기
     public List<ReviewDto> getTrainerReviewAll(int page, int pageSize, int filter, int trainerId) {

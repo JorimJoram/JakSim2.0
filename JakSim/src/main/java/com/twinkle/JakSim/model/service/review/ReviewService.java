@@ -1,13 +1,8 @@
 package com.twinkle.JakSim.model.service.review;
 
 import com.twinkle.JakSim.model.dao.review.ReviewDao;
-import com.twinkle.JakSim.model.dao.trainer.TrainerDao;
 import com.twinkle.JakSim.model.dto.review.ReviewDto;
-import com.twinkle.JakSim.model.dto.review.ReviewDto;
-import com.twinkle.JakSim.model.dto.trainer.TrainerInsertDto;
-import com.twinkle.JakSim.model.dto.trainer.TrainerSearchDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +41,10 @@ public class ReviewService {
         return reviewDao.getReviewListByUtIdx(ut_idx, sort, star);
     }
 
+    public List<ReviewDto> getReviewListByUsername(String username, boolean myPage, boolean sort, int star) {
+        return reviewDao.getReviewListByUsername(username, myPage, sort, star);
+    }
+
 
 
     // 리뷰 수정하기
@@ -60,7 +59,7 @@ public class ReviewService {
     // 트레이너별 리뷰 미리보기 (3개)
     @Transactional
     public List<ReviewDto> showReview(int trainerId) {
-        return reviewDao.getTrainerReview(trainerId);
+        return reviewDao.getReviewListByUtIdx(trainerId, false, 0);
     }
 
     // 트레이너별 리뷰 전체보기
@@ -86,6 +85,4 @@ public class ReviewService {
     public Optional<List<ReviewDto>> showMyReviewForMyPage(String userId) {
         return reviewDao.getMyReviewForMyPage(userId);
     }
-
-
 }
