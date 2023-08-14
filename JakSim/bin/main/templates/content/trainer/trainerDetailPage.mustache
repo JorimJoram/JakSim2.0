@@ -3,19 +3,22 @@
 <script src="/javascript/payment/kakaoPay/kakaoPay.js"></script>
 <script src="https://kit.fontawesome.com/05995ac069.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/javascript/review/review.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 <body>
 {{>layout/navi}}
-<!--Comments-->
 <div id="trainer_Detail_Container">
     <br/>
     <span class="jaksim_title_font" style="font-weight: bold; font-size: 19px;">트레이너 상세페이지</span>
     <br/><br/>
     {{#trainer}}
     <div id="trainer-info">
-        <img src="{{profile}}" alt="Trainer Image" width='270' height='270' style="border-radius: 5%;  object-fit: cover; object-position: top center;"/>
+        <script>
+        var imageList = [{{#imageList}}"{{imagePath}}",{{/imageList}}];
+        var firstImage = imageList.length > 0 ? imageList[0] : '';
+        var imgTag = "<img src='" + firstImage + "' alt='Trainer Image' width='270' height='270' style='border-radius: 5%;  object-fit: cover; object-position: top center;'/>";
+        document.write(imgTag);
+        </script>
 
         <div id="trainer-table">
                 <span class="expert1" style="background-color: #E9E1FB;
@@ -70,6 +73,8 @@
             <div id="trainer-cert">
             {{#cert}}
                 <span>{{certName}}</span><br/>
+
+                <img src="{{certImage}}" alt="Trainer Image" width="220" height="220"><br/>
             {{/cert}}
             </div>
 
@@ -116,20 +121,21 @@
         <br/>
             <div class="review-filters" style="margin-top: 10px; width: 450px;">
                 <i class="fa-solid fa-star fa-xl" style="color: #f3eb12; margin-bottom:10px;"></i>
-                <span id="review_avg_star" style="font-size:19px; font-weight: bold; margin-top: 20px;">{{#stars}}{{avgRstar}}{{/stars}}</span>
+                <span style="font-size:19px; font-weight: bold; margin-top: 20px;">
+                {{#stars}}{{avgRstar}}{{/stars}} </span>
                 <span style="font-size:15px; margin-top: 20px;">
                 ({{#stars}}{{reviewCnt}}{{/stars}}개) </span>
-                <a href="/trainer/review/{{#trainer}}{{trainerId}}{{/trainer}}" style="color: #747474; font-size:13px; ">리뷰 전체보기</a>
+                <a href="/trainer/review/{{#trainer}}{{userId}}{{/trainer}}" style="color: #747474; font-size:13px; ">리뷰 전체보기</a>
             </div>
             {{#review}}
             <div class="review">
                 <table>
             <tbody id="review-form">
-                <tr id="review-{{idx}}">
-                    <td>작심<span class="reviewIdx">{{idx}}</span></td>
+                <tr id="review-{{reviewId}}">
+                    <td>작심<span class="reviewIdx">{{reviewId}}</span></td>
                     <td class="countStar" style="width: 100px;" data-star="{{star}}">{{star}}</td>
-                    <td style="width: 420px;">{{content}}</td>
-                    <td data-date="{{c_dt}}">{{c_dt}}</td>
+                    <td style="width: 420px;">{{reviewContent}}</td>
+                    <td data-date="{{reviewCreateDate}}">{{reviewCreateDate}}</td>
                     <td class="reviewLink"> {{userId}}
                     </td>
                     <td class="delete_review_td" hidden="hidden">
@@ -163,9 +169,6 @@
     var reviewElements = document.querySelectorAll('.reviewLink');
     var deleteReviewForm = document.querySelectorAll('.delete_review_td');
     var reviewIdx = document.querySelectorAll('.reviewIdx');
-
-    var reviewAvg = document.getElementById('review_avg_star');
-    getAvgStar(reviewAvg);
 
     if (currentUser) {
         for (var i = 0; i < reviewElements.length; i++) {
