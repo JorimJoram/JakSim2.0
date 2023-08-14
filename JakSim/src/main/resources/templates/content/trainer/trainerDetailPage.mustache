@@ -3,6 +3,7 @@
 <script src="/javascript/payment/kakaoPay/kakaoPay.js"></script>
 <script src="https://kit.fontawesome.com/05995ac069.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/javascript/review/review.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
 <body>
@@ -114,8 +115,7 @@
         <br/>
             <div class="review-filters" style="margin-top: 10px; width: 450px;">
                 <i class="fa-solid fa-star fa-xl" style="color: #f3eb12; margin-bottom:10px;"></i>
-                <span style="font-size:19px; font-weight: bold; margin-top: 20px;">
-                {{#stars}}{{avgRstar}}{{/stars}} </span>
+                <span id="review_avg_star" style="font-size:19px; font-weight: bold; margin-top: 20px;">{{#stars}}{{avgRstar}}{{/stars}}</span>
                 <span style="font-size:15px; margin-top: 20px;">
                 ({{#stars}}{{reviewCnt}}{{/stars}}개) </span>
                 <a href="/trainer/review/{{#trainer}}{{trainerId}}{{/trainer}}" style="color: #747474; font-size:13px; ">리뷰 전체보기</a>
@@ -162,6 +162,9 @@
     var reviewElements = document.querySelectorAll('.reviewLink');
     var deleteReviewForm = document.querySelectorAll('.delete_review_td');
     var reviewIdx = document.querySelectorAll('.reviewIdx');
+
+    var reviewAvg = document.getElementById('review_avg_star');
+    getAvgStar(reviewAvg);
 
     if (currentUser) {
         for (var i = 0; i < reviewElements.length; i++) {

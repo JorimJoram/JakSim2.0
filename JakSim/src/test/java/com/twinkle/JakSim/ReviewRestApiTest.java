@@ -74,4 +74,11 @@ public class ReviewRestApiTest {
         List<ReviewDto> list = reviewService.getReviewListByUsername("west1", true, true, 3);
         list.forEach((item) -> System.out.println(item.toString()));
     }
+
+    @Test
+    void getReviewAvg(){
+        System.out.println(reviewService.getAvgReview(12, 0));
+        System.out.println(reviewService.getAvgReview(0, 11));
+        System.out.println(reviewService.getAvgReview(11, 11));
+    }
 }

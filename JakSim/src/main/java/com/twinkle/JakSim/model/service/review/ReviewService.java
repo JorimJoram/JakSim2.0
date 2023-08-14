@@ -45,6 +45,16 @@ public class ReviewService {
         return reviewDao.getReviewListByUsername(username, myPage, sort, star);
     }
 
+    public double getAvgReview(int ut_idx, int tp_idx) {
+        double result = 0;
+        if((tp_idx == 0) ^ (ut_idx == 0)) {
+            result = (tp_idx == 0) ? reviewDao.getAvgStarByUtIdx(ut_idx) : reviewDao.getAvgStarByTpIdx(tp_idx);
+        }
+        return result;
+    }
+
+
+
 
 
     // 리뷰 수정하기

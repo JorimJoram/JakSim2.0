@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -138,10 +139,46 @@ public class ReviewDao {
         return ((1 <= star) && (star <= 5)) ? "AND R.R_STAR = ? " : "";
     }
 
+    public double getAvgStarByUtIdx(int ut_idx) {
+        this.sql = commonAvgStar() +
+                    "AND " +
+                    "T.UT_IDX = ? " +
+                    "GROUP BY T.UT_IDX";
+        double result;
+        try{
+            result = Objects.requireNonNull(jdbcTemplate.queryForObject(sql, Double.class, ut_idx));
+        }catch (Exception e){
+            System.out.println("null");
+            result = 0;
+        }
+        return result;
+    }
 
+    public double getAvgStarByTpIdx(int tp_idx) {
+        this.sql = commonAvgStar() +
+                "AND " +
+                "T.UT_IDX = ? " +
+                "GROUP BY T.UT_IDX";
+        double result;
+        try{
+            result = Objects.requireNonNull(jdbcTemplate.queryForObject(sql, Double.class, tp_idx));
+        }catch (Exception e){
+            System.out.println("null");
+            result = 0;
+        }
+        return result;
+    }
 
-
-
+    private String commonAvgStar() {
+        return "SELECT COALESCE(ROUND(AVG(R.R_STAR), 1),0) AS R_AVG_STAR " +
+                "FROM TRAINER_DETAILS T, PRODUCT PR, PAYMENT P, REVIEW R " +
+                "WHERE " +
+                "T.UT_IDX = PR.UT_IDX " +
+                "AND " +
+                "PR.TP_IDX = P.TP_IDX " +
+                "AND " +
+                "P.TID = R.TID ";
+    }
 
 
     // 트레이너 리뷰 전체보기
@@ -224,4 +261,5 @@ public class ReviewDao {
                 review.getStar(), userId);
 
     }
+
 }

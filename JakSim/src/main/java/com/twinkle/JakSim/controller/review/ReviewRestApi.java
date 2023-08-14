@@ -54,4 +54,10 @@ public class ReviewRestApi {
                                                    @AuthenticationPrincipal User user){
         return reviewService.getReviewListByUsername(user.getUsername(), myPage, sort, star);
     }
+
+    @GetMapping("/get/avg")
+    public double getAvgReview(@RequestParam(defaultValue = "0") int ut_idx,
+                               @RequestParam(defaultValue = "0") int tp_idx, @AuthenticationPrincipal User user){
+        return reviewService.getAvgReview(ut_idx, tp_idx);
+    }
 }
