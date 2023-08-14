@@ -60,4 +60,10 @@ public class ReviewRestApi {
                                @RequestParam(defaultValue = "0") int tp_idx, @AuthenticationPrincipal User user){
         return reviewService.getAvgReview(ut_idx, tp_idx);
     }
+
+    @GetMapping("/get/count")
+    public int getReviewSize(@RequestParam(defaultValue = "0") int ut_idx,
+                             @RequestParam(defaultValue = "0") int tp_idx, @AuthenticationPrincipal User user){
+        return 0;
+    }
 }
