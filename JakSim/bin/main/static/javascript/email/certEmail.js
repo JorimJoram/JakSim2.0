@@ -14,9 +14,9 @@ function checkEmailFormat(){
 }
 
 function isRegistered(){
-    axios.post('/find/api/email', {email: emailInput.value})
+    axios.get(`/email/api/verify-email?email=${emailInput.value}`)
         .then(response => {
-            if(response.data){
+            if(!response.data){
                 sessionStorage.setItem('userEmail', emailInput.value);
                 next();
             }else{
@@ -36,17 +36,16 @@ function isDuplicated(){
         emailDupSpan.style.color = 'red';
     };
 
-    axios.post('/account/checkemail', {email:emailInput.value})
+    axios.get(`/email/api/verify-email?email=${emailInput.value}`)
         .then(response => {
             (response.data) ? success() : fail();
         })
         .catch(error => {
             console.error(error);
-        })
+        });
 }
 
 function sendMail(){
-    timeout = false;
     data = ((emailInput === undefined) ? {email: sessionEmail} : {email:emailInput.value})
     alert('인증번호를 전송했습니다.');
     axios.post('/email/api/send', data)

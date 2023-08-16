@@ -39,6 +39,8 @@ function nextPage(){
 
 function afterConfirm(emailResult){
     (emailResult) && (!timeout) ? isEmail = true : isEmail = false;
+    console.log(emailResult);
+    console.log(emailResult && !timeout);
     isEmail && isPhone ? nextButton.disabled = false : nextButton.disabled = true;
 }
 
@@ -71,7 +73,7 @@ function checkPhone(){
     }
 
     if(checkPhoneLength() && checkPhoneFormat()){
-        axios.post('/account/checktel', data)
+        axios.get(`/account/api/verify-tel?tel=${phoneInput.value}`)
             .then(response => {
                 response.data ? success() : fail();
                 isEmail && isPhone ? nextButton.disabled = false : nextButton.disabled = true;

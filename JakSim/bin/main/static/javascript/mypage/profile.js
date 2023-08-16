@@ -50,7 +50,7 @@ function stopTimer(){
 }
 
 function checkEmail(){
-    axios.post('/mypage/api/email/get', {email: emailInput.value})
+    axios.get(`/email/api/verify-email?email=${emailInput.value}`)
         .then(response=>{
             if(response.data){
                 document.getElementById('profile_dup_span').innerHTML = '';
@@ -102,13 +102,11 @@ function validateEmail(){
     validateDiv.appendChild(codeCheckButton);
     validateDiv.appendChild(timeSpan);
     validateDiv.appendChild(validateFail);
-
-
 }
 
 function sendCode(data){
     showValidateTime();
-    axios.post('/mypage/api/email/check', data)
+    axios.post('/email/api/send', data)
         .then(response => {
             code = response.data;
         })
@@ -127,13 +125,13 @@ function codeCheck(){
 }
 
 function updateEmail(){
-    axios.put('/email/api/modify, {email: emailInput.value})
+    axios.put('/email/api/modify', {email: emailInput.value})
         .then(response => {
-            if(response.data){
+            if(response.data > 0){
                 window.location.href='/';
                 alert('이메일이 변경되었습니다.');
             }else{
-                alert('어라?');
+                alert('이메일 변경에 실패했습니다.');
             }
         })
         .catch(error => {
@@ -148,7 +146,7 @@ function changeProfileImage(){
     var formData = new FormData();
     formData.append('file', file);
 
-    axios.put('/mypage/api/profile/update', formData, {headers: {'Content-Type' : 'multipart/form-data'}})
+    axios.put('/account/api/change-image', formData, {headers: {'Content-Type' : 'multipart/form-data'}})
         .then(response => {
             if(response.data){
                 window.location.href='/';

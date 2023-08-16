@@ -1,13 +1,15 @@
-window.onload = function(){
-    showReviews();
-}
+function getAvgStar(reviewAvg){
+    var trainerId = getTrainerId();
 
-function showReviews(){
-    axios.get('/review/api/1')
-        .then(response => {
+    axios.get(`/review/api/get/avg?ut_idx=${trainerId}`)
+        .then((response) => {
             console.log(response.data);
-        })
-        .catch(error => {
+            reviewAvg.innerHTML = response.data.toFixed(1);
+        }).catch((error) => {
             console.error(error);
-        })
+    });
+}
+function getTrainerId(){
+    var currentURL = window.location.href;
+    return new URL(currentURL).pathname.split("/").pop();
 }

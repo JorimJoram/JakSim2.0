@@ -1,5 +1,6 @@
 {{>layout/header}}
 <link rel="stylesheet" href="/css/trainer/editReview.css">
+<script src="/javascript/review/createReview.js"></script>
 <body>
 {{>layout/navi}}
 <div>
@@ -8,7 +9,7 @@
         margin-bottom: 30px;
         margin-left: 50px;">리뷰 등록</h3>
 </div>
-<form id="review-form" action="/registerReview/{{trainerIdx}}" method="POST">
+<div id="review-form">
         <div class="review-star">
             <label for="review-star">별점</label>
             <select class="star_select" id="star" name="star" style="margin-left: 10px;">
@@ -27,7 +28,7 @@
         "/>
             <br/>
         </div>
-    <input type="submit" id="review-edit-button" value="저장">
+    <button type="button" id="save_button" onclick="saveListener()">저장</button>
     <button type="button" id="review-cancel-button" onclick="goBack()">취소</button>
     <script>
         function goBack() {
@@ -35,6 +36,6 @@
             window.history.back();
         }
     </script>
-</form>
+</div>
 
 {{>layout/footer}}
